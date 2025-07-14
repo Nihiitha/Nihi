@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const [form, setForm] = useState({ usernameOrEmail: '', password: '' });
   const [errors, setErrors] = useState<{ usernameOrEmail?: string; password?: string }>({});
   const [touched, setTouched] = useState<{ usernameOrEmail: boolean; password: boolean }>({ usernameOrEmail: false, password: false });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,14 +24,40 @@ const Login: React.FC = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage(null);
     const validationErrors = validate();
     setErrors(validationErrors);
     setTouched({ usernameOrEmail: true, password: true });
     if (Object.keys(validationErrors).length === 0) {
-      // Submit logic here
-      alert('Login submitted!');
+      setLoading(true);
+      try {
+        // Prepare payload for backend
+        const payload: any = { password: form.password };
+        if (form.usernameOrEmail.includes('@')) {
+          payload.email = form.usernameOrEmail;
+        } else {
+          payload.username = form.usernameOrEmail;
+        }
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          localStorage.setItem('token', data.token);
+          setMessage('Login successful! Redirecting...');
+          setTimeout(() => navigate('/'), 1000);
+        } else {
+          setMessage(data.error || 'Login failed.');
+        }
+      } catch (err) {
+        setMessage('Network error. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -49,6 +78,7 @@ const Login: React.FC = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${errors.usernameOrEmail && touched.usernameOrEmail ? 'border-red-500' : ''}`}
+                disabled={loading}
               />
               {errors.usernameOrEmail && touched.usernameOrEmail && (
                 <p className="mt-1 text-xs text-red-600">{errors.usernameOrEmail}</p>
@@ -65,6 +95,7 @@ const Login: React.FC = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${errors.password && touched.password ? 'border-red-500' : ''}`}
+                disabled={loading}
               />
               {errors.password && touched.password && (
                 <p className="mt-1 text-xs text-red-600">{errors.password}</p>
@@ -75,11 +106,15 @@ const Login: React.FC = () => {
             <button
               type="submit"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={loading}
             >
-              Login
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </div>
         </form>
+        {message && (
+          <div className={`mt-4 text-center text-sm ${message.includes('success') ? 'text-green-600' : 'text-red-600'}`}>{message}</div>
+        )}
         <div className="text-sm text-center">
           Don't have an account?{' '}
           <Link to="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">Sign up</Link>
