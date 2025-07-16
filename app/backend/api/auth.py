@@ -24,6 +24,7 @@ def sanitize_input(value):
         return ''
     return re.sub(r'[<>"\'%;()&+]', '', value)
 
+# Remove any code that uses current_app at the module level
 @auth_bp.route('/api/signup', methods=['POST'])
 @limiter.limit('5 per minute')
 def signup():
