@@ -5,8 +5,8 @@ class Config:
     # Flask
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev')
     
-    # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'mysql://Nihitha:Nihi#3214@localhost/prok_db')
+    # Database: Use absolute path for SQLite to avoid path resolution issues
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////home/nihitha/Nihi/app/backend/users.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # JWT
@@ -15,3 +15,7 @@ class Config:
     
     # CORS
     CORS_HEADERS = 'Content-Type' 
+
+    # Documentation:
+    # - To use MySQL, set the DATABASE_URL environment variable.
+    # - For local development, SQLite will be used if MySQL is not available. 

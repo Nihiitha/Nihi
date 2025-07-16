@@ -1,22 +1,36 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+/**
+ * Login component handles user authentication.
+ * - Sends credentials to backend
+ * - Stores JWT on success
+ * - Displays error and loading feedback
+ */
 const Login: React.FC = () => {
+  // Form state
   const [form, setForm] = useState({ usernameOrEmail: '', password: '' });
+  // Error state for validation
   const [errors, setErrors] = useState<{ usernameOrEmail?: string; password?: string }>({});
+  // Track touched fields for error display
   const [touched, setTouched] = useState<{ usernameOrEmail: boolean; password: boolean }>({ usernameOrEmail: false, password: false });
+  // Loading state for async login
   const [loading, setLoading] = useState(false);
+  // Message for user feedback (success/error)
   const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Mark field as touched on blur
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     setTouched({ ...touched, [e.target.name]: true });
   };
 
+  // Validate form fields
   const validate = () => {
     const newErrors: { usernameOrEmail?: string; password?: string } = {};
     if (!form.usernameOrEmail) newErrors.usernameOrEmail = 'Username or Email is required';
@@ -24,6 +38,7 @@ const Login: React.FC = () => {
     return newErrors;
   };
 
+  // Handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
@@ -33,13 +48,14 @@ const Login: React.FC = () => {
     if (Object.keys(validationErrors).length === 0) {
       setLoading(true);
       try {
-        // Prepare payload for backend
+        // Prepare payload for backend: use email or username
         const payload: any = { password: form.password };
         if (form.usernameOrEmail.includes('@')) {
           payload.email = form.usernameOrEmail;
         } else {
           payload.username = form.usernameOrEmail;
         }
+        // Send login request
         const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -47,10 +63,12 @@ const Login: React.FC = () => {
         });
         const data = await res.json();
         if (res.ok && data.token) {
+          // Store JWT in localStorage for future requests
           localStorage.setItem('token', data.token);
           setMessage('Login successful! Redirecting...');
           setTimeout(() => navigate('/'), 1000);
         } else {
+          // Show backend error message
           setMessage(data.error || 'Login failed.');
         }
       } catch (err) {
@@ -80,6 +98,7 @@ const Login: React.FC = () => {
                 className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${errors.usernameOrEmail && touched.usernameOrEmail ? 'border-red-500' : ''}`}
                 disabled={loading}
               />
+              {/* Show validation error if field is touched */}
               {errors.usernameOrEmail && touched.usernameOrEmail && (
                 <p className="mt-1 text-xs text-red-600">{errors.usernameOrEmail}</p>
               )}
@@ -97,6 +116,7 @@ const Login: React.FC = () => {
                 className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${errors.password && touched.password ? 'border-red-500' : ''}`}
                 disabled={loading}
               />
+              {/* Show validation error if field is touched */}
               {errors.password && touched.password && (
                 <p className="mt-1 text-xs text-red-600">{errors.password}</p>
               )}
@@ -112,6 +132,7 @@ const Login: React.FC = () => {
             </button>
           </div>
         </form>
+        {/* Show feedback message (success or error) */}
         {message && (
           <div className={`mt-4 text-center text-sm ${message.includes('success') ? 'text-green-600' : 'text-red-600'}`}>{message}</div>
         )}

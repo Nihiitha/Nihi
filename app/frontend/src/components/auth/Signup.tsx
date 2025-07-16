@@ -45,14 +45,31 @@ const Signup: React.FC = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
     setTouched({ username: true, email: true, password: true, confirm_password: true });
     if (Object.keys(validationErrors).length === 0) {
-      // Submit logic here
-      alert('Signup submitted!');
+      try {
+        const res = await fetch('/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: form.username,
+            email: form.email,
+            password: form.password,
+          }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert('Signup successful!');
+        } else {
+          alert(data.error || 'Signup failed.');
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+      }
     }
   };
 

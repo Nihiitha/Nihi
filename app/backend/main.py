@@ -1,7 +1,10 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_cors import CORS
-from config import Config
+try:
+    from app.backend.config import Config
+except ImportError:
+    from config import Config
 from dotenv import load_dotenv
 from models import db
 from flask_jwt_extended import JWTManager

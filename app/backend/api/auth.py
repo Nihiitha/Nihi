@@ -62,7 +62,9 @@ def signup():
 def login():
     try:
         data = request.get_json() or {}
-        identifier = sanitize_input(data.get('username', '') or data.get('email', '')).strip().lower()
+        identifier = sanitize_input(
+            data.get('usernameOrEmail', '') or data.get('username', '') or data.get('email', '')
+        ).strip().lower()
         password = data.get('password', '')
 
         # Find user by username or email
@@ -71,7 +73,7 @@ def login():
             return jsonify({'error': 'Invalid credentials.'}), 401
 
         # Generate JWT token
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         return jsonify({
             'token': access_token,
             'user': user.to_dict()
