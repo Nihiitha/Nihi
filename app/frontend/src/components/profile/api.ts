@@ -1,24 +1,25 @@
-const API_URL = 'http://localhost:5000';
+import { mockUser, mockActivity } from "./mockData";
 
-export const profileApi = {
-  getProfile: async () => {
-    const response = await fetch(`${API_URL}/profile`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    return response.json();
-  },
+export function fetchUserProfile() {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(mockUser), 800);
+  });
+}
 
-  updateProfile: async (profileData: any) => {
-    const response = await fetch(`${API_URL}/profile`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify(profileData),
-    });
-    return response.json();
-  },
-}; 
+export function fetchUserActivity(offset = 0, limit = 5) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(mockActivity.slice(offset, offset + limit)), 800);
+  });
+}
+
+export function updateUserProfile(data) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve({ success: true, ...data }), 1000);
+  });
+}
+
+export function uploadProfileImage(file) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve({ url: URL.createObjectURL(file) }), 1200);
+  });
+} 

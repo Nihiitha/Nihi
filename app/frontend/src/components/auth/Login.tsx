@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 /**
@@ -19,6 +19,23 @@ const Login: React.FC = () => {
   // Message for user feedback (success/error)
   const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [loginSuccess, setLoginSuccess] = useState(false);
+
+  // Clear message on navigation (unmount)
+  useEffect(() => {
+    return () => setMessage(null);
+  }, []);
+
+  // Handle redirect after login success
+  useEffect(() => {
+    if (loginSuccess) {
+      const timer = setTimeout(() => {
+        setMessage(null);
+        navigate('/profile/1'); // Redirect to profile page after login
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [loginSuccess, navigate]);
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,8 +82,9 @@ const Login: React.FC = () => {
         if (res.ok && data.token) {
           // Store JWT in localStorage for future requests
           localStorage.setItem('token', data.token);
+          localStorage.setItem('userId', '1'); // Store mock userId for now
           setMessage('Login successful! Redirecting...');
-          setTimeout(() => navigate('/'), 1000);
+          setLoginSuccess(true);
         } else {
           // Show backend error message
           setMessage(data.error || 'Login failed.');
@@ -126,7 +144,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              disabled={loading}
+              disabled={loading || loginSuccess}
             >
               {loading ? 'Logging in...' : 'Login'}
             </button>

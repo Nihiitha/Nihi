@@ -1,44 +1,43 @@
-const API_URL = 'http://localhost:5000';
+import { mockProfiles, mockActivities } from '../data/mockData';
+
+function simulateDelay<T>(data: T, delay = 700): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(data), delay));
+}
 
 export const api = {
-  // Auth endpoints
-  login: async (credentials: { email: string; password: string }) => {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials),
-    });
-    return response.json();
+  // Mock login
+  login: async (credentials: { email?: string; username?: string; password: string }) => {
+    // Simulate login: accept any password, return userId=1 and a fake token
+    if ((credentials.email || credentials.username) && credentials.password) {
+      return simulateDelay({ token: 'mock-jwt-token', userId: 1 });
+    }
+    return simulateDelay({ error: 'Invalid credentials' });
   },
 
+  // Mock signup
   signup: async (userData: { email: string; password: string; name: string }) => {
-    const response = await fetch(`${API_URL}/auth/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
-    return response.json();
+    if (userData.email && userData.password && userData.name) {
+      return simulateDelay({ success: true, userId: 1 });
+    }
+    return simulateDelay({ error: 'Missing fields' });
   },
 
-  // Profile endpoints
-  getProfile: async () => {
-    const response = await fetch(`${API_URL}/profile`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    return response.json();
+  // Mock get profile
+  getProfile: async (userId = 1) => {
+    const profile = mockProfiles.find((p) => p.id === userId);
+    if (profile) return simulateDelay(profile);
+    return simulateDelay({ error: 'Profile not found' });
   },
 
+  // Mock update profile
   updateProfile: async (profileData: any) => {
-    const response = await fetch(`${API_URL}/profile`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify(profileData),
-    });
-    return response.json();
+    // Simulate success
+    return simulateDelay({ success: true, profile: profileData });
+  },
+
+  // Mock get activity
+  getActivity: async (userId = 1) => {
+    // Return all activities for now
+    return simulateDelay(mockActivities);
   },
 }; 
