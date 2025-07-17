@@ -10,7 +10,7 @@ import traceback
 
 # Blueprint
 auth_bp = Blueprint('auth', __name__)
-
+ 
 # Rate limiter (attach to app in main.py)
 limiter = Limiter(key_func=get_remote_address, app=None)
 

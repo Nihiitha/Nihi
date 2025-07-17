@@ -146,6 +146,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         onChange={handleFileInputChange}
         className="hidden"
         disabled={disabled}
+        data-testid="file-input"
       />
 
       <div

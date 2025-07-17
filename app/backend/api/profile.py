@@ -8,7 +8,7 @@ from PIL import Image
 import uuid
 
 profile_bp = Blueprint('profile', __name__)
-
+ 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '../../uploads/profile_images')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB
@@ -30,7 +30,7 @@ def get_profile():
         return jsonify({'error': 'User not found.'}), 404
     if user.profile:
         return jsonify({'profile': user.profile.to_dict()}), 200
-    return jsonify({'user': user.to_dict()}), 200
+    return jsonify({'user': user.to_dict()}), 200 
 
 @profile_bp.route('/api/profile', methods=['PUT'])
 @jwt_required()

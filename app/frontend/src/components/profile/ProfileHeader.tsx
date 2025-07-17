@@ -21,7 +21,7 @@ interface UserProfile {
 interface ProfileHeaderProps {
   profile: UserProfile;
   isOwnProfile?: boolean;
-  onEdit?: () => void;
+  onEdit?: (section?: string) => void;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, isOwnProfile = false, onEdit }) => {
@@ -29,7 +29,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, isOwnProfile = f
 
   const handleEdit = () => {
     if (onEdit) {
-      onEdit();
+      onEdit('profile');
     }
     setIsEditing(true);
   };

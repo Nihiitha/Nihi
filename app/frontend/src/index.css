@@ -22,4 +22,50 @@
   .input {
     @apply px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
   }
+  
+  /* Rich Text Editor Styles */
+  .ql-editor {
+    @apply min-h-[200px] text-gray-900;
+  }
+  
+  .ql-toolbar {
+    @apply border-gray-300 bg-gray-50;
+  }
+  
+  .ql-container {
+    @apply border-gray-300;
+  }
+  
+  .ql-editor.ql-blank::before {
+    @apply text-gray-400;
+  }
+  
+  /* Prose styles for content display */
+  .prose {
+    @apply text-gray-900;
+  }
+  
+  .prose h1, .prose h2, .prose h3 {
+    @apply font-bold text-gray-900;
+  }
+  
+  .prose p {
+    @apply mb-4;
+  }
+  
+  .prose ul, .prose ol {
+    @apply mb-4 pl-6;
+  }
+  
+  .prose li {
+    @apply mb-1;
+  }
+  
+  .prose blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic text-gray-600;
+  }
+  
+  .prose code {
+    @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+  }
 }

@@ -52,13 +52,11 @@ describe('ProfileEditForm', () => {
       <ProfileEditForm profile={mockProfile} onSave={jest.fn()} onCancel={jest.fn()} />
     );
     const file = new File(['avatar'], 'avatar.png', { type: 'image/png' });
-    // Select the file input by role
-    const input = screen.getByRole('textbox', { hidden: true }) || screen.getByRole('file', { hidden: true }) || screen.getByTestId('file-input');
-    // fallback: get the first input[type="file"]
-    const fileInput = input || document.querySelector('input[type="file"]');
+    // Use data-testid for robust selection
+    const fileInput = screen.getByTestId('file-input');
     fireEvent.change(fileInput, { target: { files: [file] } });
     await waitFor(() => {
-      expect(screen.getByAltText(/User Avatar/i)).toBeInTheDocument();
+      expect(screen.getByAltText(/Preview/i)).toBeInTheDocument();
     });
   });
 

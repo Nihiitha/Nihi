@@ -152,7 +152,7 @@ const Profile: React.FC = () => {
     }
   }, [userId]);
 
-  const handleEdit = (section?: string) => {
+  const handleEdit = (section: string = 'profile') => {
     console.log('Edit profile section:', section);
     // Navigate to edit page
     if (userId) {

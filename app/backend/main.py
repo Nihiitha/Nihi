@@ -26,6 +26,7 @@ jwt = JWTManager(app)
 # Import models (after db is initialized)
 from models.user import User
 from models.profile import Profile, Skill, Experience, Education
+from models.post import Post, PostLike, PostComment
 
 # Register auth blueprint and limiter
 from api.auth import auth_bp, limiter
