@@ -12,6 +12,7 @@ export interface CreatePostResponse {
 }
 
 export const postsApi = {
+<<<<<<< HEAD
   createPost: async (postData: PostData): Promise<CreatePostResponse> => {
     try {
       const response = await fetch(`${API_URL}/api/posts`, {
@@ -82,6 +83,22 @@ export const postsApi = {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
     });
+=======
+  createPost: async (user_id: string, content: string, media?: File) => {
+    const formData = new FormData();
+    formData.append('user_id', user_id);
+    formData.append('content', content);
+    if (media) formData.append('media', media);
+    const response = await fetch(`${API_URL}/posts`, {
+      method: 'POST',
+      body: formData,
+    });
+    return response.json();
+  },
+
+  getPosts: async () => {
+    const response = await fetch(`${API_URL}/posts`);
+>>>>>>> day-5-post-creation
     return response.json();
   },
 }; 

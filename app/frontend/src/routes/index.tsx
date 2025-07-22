@@ -6,6 +6,7 @@ import ProfileEdit from '../pages/ProfileEdit';
 import ProfileView from '../components/profile/ProfileView';
 import PostCreate from '../components/posts/PostCreate';
 import PostList from '../components/posts/PostList';
+import Feed from '../pages/Feed';
 // import Feed from '../components/feed/Feed'; // Unused for now
 import JobList from '../components/job-board/JobList';
 import MessageList from '../components/messaging/MessageList';
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
   {
     path: '/posts',
     element: <PostList />,
+  },
+  {
+    path: '/feed',
+    element: <Feed />,
   },
   {
     path: '/jobs',
