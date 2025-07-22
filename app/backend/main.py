@@ -40,7 +40,7 @@ from api.jobs import jobs_bp
 from api.messaging import messaging_bp
 
 app.register_blueprint(profile_bp)
-app.register_blueprint(posts_bp)
+app.register_blueprint(posts_bp, url_prefix='/posts')
 app.register_blueprint(feed_bp)
 app.register_blueprint(jobs_bp)
 app.register_blueprint(messaging_bp)
