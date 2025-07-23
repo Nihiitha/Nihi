@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_cors import CORS
+import os
 try:
     from app.backend.config import Config
 except ImportError:
@@ -18,7 +19,13 @@ app.config.from_object(Config)
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 
 # Initialize extensions
-CORS(app)
+ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173,https://your-frontend-url.onrender.com').split(',')
+CORS(app,
+     origins=ALLOWED_ORIGINS,
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allow_headers=['Content-Type', 'Authorization', 'X-Requested-With'],
+     supports_credentials=True,
+     max_age=3600)
 db.init_app(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)

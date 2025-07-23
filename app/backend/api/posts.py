@@ -20,41 +20,47 @@ def allowed_file(filename):
 
 @posts_bp.route('/', methods=['POST'])
 def create_post():
-    user_id = request.form.get('user_id')
-    content = request.form.get('content')
-    file = request.files.get('media')
-    from models import User
-    user = None
-    if user_id:
-        # Try to find by id or email
-        if user_id.isdigit():
-            user = User.query.get(int(user_id))
-        else:
-            user = User.query.filter_by(email=user_id).first()
-        if not user:
-            # Auto-create user if not found
-            user = User(email=user_id if '@' in user_id else f'{user_id}@example.com')
-            db.session.add(user)
-            db.session.commit()
-    if not user or not content:
-        return jsonify({'error': 'user_id and content are required.'}), 400
-    media_url = None
-    if file:
-        from werkzeug.utils import secure_filename
-        import os
-        from datetime import datetime
-        UPLOAD_FOLDER = 'uploads/posts'
-        if not os.path.exists(UPLOAD_FOLDER):
-            os.makedirs(UPLOAD_FOLDER)
-        filename = secure_filename(f"{datetime.utcnow().timestamp()}_{file.filename}")
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(filepath)
-        media_url = f"/posts/media/{filename}"
-    from models import Post
-    post = Post(user_id=user.id, content=content, media_url=media_url)
-    db.session.add(post)
-    db.session.commit()
-    return jsonify({'message': 'Post created successfully.'}), 201
+    try:
+        user_id = request.form.get('user_id')
+        content = request.form.get('content')
+        file = request.files.get('media')
+        from models import User
+        user = None
+        if user_id:
+            # Try to find by id or email
+            if user_id.isdigit():
+                user = User.query.get(int(user_id))
+            else:
+                user = User.query.filter_by(email=user_id).first()
+            if not user:
+                # Auto-create user if not found
+                default_username = user_id if user_id.isdigit() else (user_id.split('@')[0] if '@' in user_id else user_id)
+                user = User(email=user_id if '@' in user_id else f'{user_id}@example.com', username=default_username)
+                db.session.add(user)
+                db.session.commit()
+        if not user or not content:
+            print('ERROR: user_id and content are required.')
+            return jsonify({'error': 'user_id and content are required.'}), 400
+        media_url = None
+        if file:
+            from werkzeug.utils import secure_filename
+            import os
+            from datetime import datetime
+            UPLOAD_FOLDER = 'uploads/posts'
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            filename = secure_filename(f"{datetime.utcnow().timestamp()}_{file.filename}")
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(filepath)
+            media_url = f"/posts/media/{filename}"
+        from models import Post
+        post = Post(user_id=user.id, content=content, media_url=media_url)
+        db.session.add(post)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Post created successfully.'}), 201
+    except Exception as e:
+        print('POST CREATE ERROR:', str(e))
+        return jsonify({'error': str(e)}), 500
 
 @posts_bp.route('/media/<filename>', methods=['GET'])
 def get_media(filename):

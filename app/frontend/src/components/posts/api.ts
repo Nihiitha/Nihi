@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export interface PostData {
   content: string;
@@ -17,7 +17,7 @@ export const postsApi = {
     formData.append('user_id', user_id);
     formData.append('content', content);
     if (media) formData.append('media', media);
-    const response = await fetch(`${API_URL}/posts`, {
+    const response = await fetch(`${API_URL}/posts/`, {
       method: 'POST',
       body: formData,
     });
@@ -30,7 +30,7 @@ export const postsApi = {
    */
   getPosts: async (params: Record<string, any> = {}) => {
     const query = new URLSearchParams(params).toString();
-    const response = await fetch(`${API_URL}/posts?${query}`);
+    const response = await fetch(`${API_URL}/posts/?${query}`);
     return response.json();
   },
 

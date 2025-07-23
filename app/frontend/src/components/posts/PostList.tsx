@@ -37,6 +37,7 @@ const PostList: React.FC = () => {
   const [sortBy, setSortBy] = useState('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const debouncedSearch = useDebounce(search, 500);
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   // Fetch categories for filter dropdown
   useEffect(() => {
@@ -157,18 +158,18 @@ const PostList: React.FC = () => {
               <div className="mt-2">
                 {post.media_url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
                   <img
-                    src={`http://localhost:5000${post.media_url}`}
+                    src={`${API_URL}${post.media_url}`}
                     alt="media"
                     className="max-w-xs max-h-48 rounded"
                     loading="lazy"
                   />
                 ) : post.media_url.match(/\.(mp4|mov|avi)$/i) ? (
                   <video controls className="max-w-xs max-h-48">
-                    <source src={`http://localhost:5000${post.media_url}`} />
+                    <source src={`${API_URL}${post.media_url}`} />
                     Your browser does not support the video tag.
                   </video>
                 ) : post.media_url.match(/\.pdf$/i) ? (
-                  <a href={`http://localhost:5000${post.media_url}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">View PDF</a>
+                  <a href={`${API_URL}${post.media_url}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">View PDF</a>
                 ) : null}
               </div>
             )}

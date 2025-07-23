@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import ProfileHeader from './ProfileHeader';
 import UserInfo from './UserInfo';
 import UserActivity from './UserActivity';
@@ -55,6 +55,7 @@ interface UserProfile {
 const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -129,16 +130,15 @@ const Profile: React.FC = () => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // In real app, this would be: const response = await fetch(`/api/profiles/${userId}`);
-        setProfile(mockProfile);
-        
-        // Check if this is the current user's profile
-        const currentUserId = localStorage.getItem('userId'); // In real app, get from auth context
+        await new Promise(resolve => setTimeout(resolve, 100));
+        const storedProfile = localStorage.getItem('profile');
+        if (storedProfile) {
+          setProfile(JSON.parse(storedProfile));
+        } else {
+          setProfile(mockProfile);
+        }
+        const currentUserId = localStorage.getItem('userId');
         setIsOwnProfile(currentUserId === userId);
-        
       } catch (err) {
         setError('Failed to load profile');
         console.error('Error fetching profile:', err);
@@ -146,11 +146,10 @@ const Profile: React.FC = () => {
         setLoading(false);
       }
     };
-
     if (userId) {
       fetchProfile();
     }
-  }, [userId]);
+  }, [userId, location]);
 
   const handleEdit = (section: string = 'profile') => {
     console.log('Edit profile section:', section);

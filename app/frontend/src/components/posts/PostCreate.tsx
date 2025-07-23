@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ImageUpload from '../common/ImageUpload';
 // You can use a simple textarea for rich text, or integrate a library like react-quill for full rich text support
 // import ReactQuill from 'react-quill';
@@ -12,6 +13,7 @@ const PostCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,18 +32,22 @@ const PostCreate: React.FC = () => {
     formData.append('user_id', userId);
     formData.append('content', content);
     if (media) formData.append('media', media);
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
     try {
-      const res = await fetch('http://localhost:5000/posts', {
+      const res = await fetch(`${API_URL}/posts/`, {
         method: 'POST',
         body: formData,
       });
-      if (!res.ok) throw new Error('Failed to submit post');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to submit post');
       setSuccess('Post submitted successfully!');
       setContent('');
       setMedia(null);
       setPreview(false);
-    } catch (err) {
-      setError('Failed to submit post.');
+      // Redirect to post list
+      navigate('/posts');
+    } catch (err: any) {
+      setError(err.message || 'Failed to submit post.');
     }
     setLoading(false);
   };

@@ -1,1 +1,11 @@
- 
+# Default Avatar Image Placeholder
+
+This file indicates where the default avatar image should be placed.
+
+In a real implementation, you would:
+1. Add a default avatar image (e.g., a generic user silhouette) to this location
+2. The image should be named "default-avatar.png"
+3. Recommended size: 200x200 pixels or larger
+4. Format: PNG with transparency
+
+For now, the components will use this placeholder and you can replace it with an actual image later. 
