@@ -12,78 +12,6 @@ export interface CreatePostResponse {
 }
 
 export const postsApi = {
-<<<<<<< HEAD
-  createPost: async (postData: PostData): Promise<CreatePostResponse> => {
-    try {
-      const response = await fetch(`${API_URL}/api/posts`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(postData),
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create post');
-      }
-      
-      return { success: true, post: data };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error occurred' 
-      };
-    }
-  },
-
-  uploadMedia: async (file: File): Promise<{ success: boolean; url?: string; error?: string }> => {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch(`${API_URL}/api/posts/upload-media`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to upload media');
-      }
-
-      return { success: true, url: data.url };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error occurred' 
-      };
-    }
-  },
-
-  getPosts: async () => {
-    const response = await fetch(`${API_URL}/api/posts`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    return response.json();
-  },
-
-  likePost: async (postId: number) => {
-    const response = await fetch(`${API_URL}/api/posts/${postId}/like`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-=======
   createPost: async (user_id: string, content: string, media?: File) => {
     const formData = new FormData();
     formData.append('user_id', user_id);
@@ -96,9 +24,23 @@ export const postsApi = {
     return response.json();
   },
 
-  getPosts: async () => {
-    const response = await fetch(`${API_URL}/posts`);
->>>>>>> day-5-post-creation
+  /**
+   * Fetch posts with advanced query params
+   * @param params Query params: page, per_page, category, visibility, search, tags, sort_by, sort_order
+   */
+  getPosts: async (params: Record<string, any> = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const response = await fetch(`${API_URL}/posts?${query}`);
+    return response.json();
+  },
+
+  getCategories: async () => {
+    const response = await fetch(`${API_URL}/posts/categories`);
+    return response.json();
+  },
+
+  getPopularTags: async () => {
+    const response = await fetch(`${API_URL}/posts/popular-tags`);
     return response.json();
   },
 }; 

@@ -4,6 +4,8 @@ from models import db, Post
 from models.user import User
 from datetime import datetime
 import os
+from sqlalchemy import or_, desc
+from collections import Counter
 
 posts_bp = Blueprint('posts', __name__)
 
@@ -60,15 +62,80 @@ def get_media(filename):
 
 @posts_bp.route('/', methods=['GET'])
 def list_posts():
+    # Query params
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 10))
+    category = request.args.get('category')
+    visibility = request.args.get('visibility')
+    search = request.args.get('search')
+    tags = request.args.get('tags')  # comma-separated
+    sort_by = request.args.get('sort_by', 'created_at')
+    sort_order = request.args.get('sort_order', 'desc')
+
+    query = Post.query
+
+    # Filtering
+    if category:
+        query = query.filter(Post.category == category)
+    if visibility:
+        query = query.filter(Post.visibility == visibility)
+    if search:
+        query = query.filter(or_(Post.content.ilike(f'%{search}%'), Post.tags.ilike(f'%{search}%')))
+    if tags:
+        tag_list = [t.strip() for t in tags.split(',') if t.strip()]
+        for tag in tag_list:
+            query = query.filter(Post.tags.ilike(f'%{tag}%'))
+
+    # Sorting
+    sort_column = getattr(Post, sort_by, Post.created_at)
+    if sort_order == 'desc':
+        sort_column = desc(sort_column)
+    query = query.order_by(sort_column)
+
+    # Pagination
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    posts = pagination.items
+    total = pagination.total
+    pages = pagination.pages
+
     from models.user import User
-    posts = Post.query.order_by(Post.created_at.desc()).all()
-    return jsonify([
+    result = [
         {
             'id': p.id,
             'user_id': p.user_id,
             'username': User.query.get(p.user_id).username if User.query.get(p.user_id) else None,
             'content': p.content,
             'media_url': p.media_url,
-            'created_at': p.created_at.isoformat()
+            'created_at': p.created_at.isoformat(),
+            'category': p.category,
+            'tags': p.tags,
+            'visibility': p.visibility,
+            'likes_count': p.likes_count,
+            'views_count': p.views_count
         } for p in posts
-    ])
+    ]
+    return jsonify({
+        'posts': result,
+        'total': total,
+        'pages': pages,
+        'page': page,
+        'per_page': per_page
+    })
+
+# Endpoint to get all categories
+@posts_bp.route('/categories', methods=['GET'])
+def get_categories():
+    categories = db.session.query(Post.category).distinct().filter(Post.category.isnot(None)).all()
+    return jsonify([c[0] for c in categories if c[0]])
+
+# Endpoint to get popular tags
+@posts_bp.route('/popular-tags', methods=['GET'])
+def get_popular_tags():
+    tags = db.session.query(Post.tags).filter(Post.tags.isnot(None)).all()
+    tag_list = []
+    for t in tags:
+        if t[0]:
+            tag_list.extend([tag.strip() for tag in t[0].split(',') if tag.strip()])
+    counter = Counter(tag_list)
+    popular = counter.most_common(20)
+    return jsonify([{'tag': tag, 'count': count} for tag, count in popular])

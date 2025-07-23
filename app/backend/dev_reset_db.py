@@ -36,7 +36,7 @@ def reset_database():
         # Import all models to ensure they're registered
         from models.user import User
         from models.profile import Profile, Skill, Experience, Education
-        from models.post import Post
+        from models import Post
         from models.job import Job
         from models.message import Message
         
