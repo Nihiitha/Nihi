@@ -64,7 +64,6 @@ const ProfileEdit: React.FC = () => {
           profile={profile}
           onSave={handleSave}
           onCancel={handleCancel}
-          isSubmitting={isSubmitting}
         />
       </div>
     </div>
