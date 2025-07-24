@@ -12,13 +12,13 @@ export function fetchUserActivity(offset = 0, limit = 5) {
   });
 }
 
-export function updateUserProfile(data) {
+export function updateUserProfile(data: any) {
   return new Promise((resolve) => {
     setTimeout(() => resolve({ success: true, ...data }), 1000);
   });
 }
 
-export function uploadProfileImage(file) {
+export function uploadProfileImage(file: File) {
   return new Promise((resolve) => {
     setTimeout(() => resolve({ url: URL.createObjectURL(file) }), 1200);
   });
