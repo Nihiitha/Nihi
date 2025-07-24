@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { authApi } from './api';
 
 const Signup: React.FC = () => {
   const [form, setForm] = useState({
@@ -52,17 +53,12 @@ const Signup: React.FC = () => {
     setTouched({ username: true, email: true, password: true, confirm_password: true });
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const res = await fetch('/api/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: form.username,
-            email: form.email,
-            password: form.password,
-          }),
+        const data = await authApi.signup({
+          username: form.username,
+          email: form.email,
+          password: form.password,
         });
-        const data = await res.json();
-        if (res.ok) {
+        if (data.success || data.message) {
           alert('Signup successful!');
         } else {
           alert(data.error || 'Signup failed.');

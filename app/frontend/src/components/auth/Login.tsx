@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { authApi } from './api';
 
 /**
  * Login component handles user authentication.
@@ -72,21 +73,14 @@ const Login: React.FC = () => {
         } else {
           payload.username = form.usernameOrEmail;
         }
-        // Send login request
-        const res = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        const data = await res.json();
-        if (res.ok && data.token) {
-          // Store JWT in localStorage for future requests
+        // Use authApi.login
+        const data = await authApi.login(payload);
+        if (data.token) {
           localStorage.setItem('token', data.token);
-          localStorage.setItem('userId', '1'); // Store mock userId for now
+          localStorage.setItem('userId', '1');
           setMessage('Login successful! Redirecting...');
           setLoginSuccess(true);
         } else {
-          // Show backend error message
           setMessage(data.error || 'Login failed.');
         }
       } catch (err) {
