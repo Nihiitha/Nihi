@@ -6,7 +6,6 @@ import PostCreate from './components/posts/PostCreate';
 import PostList from './components/posts/PostList';
 import Profile from './components/profile/Profile';
 import ProfileEdit from './components/profile/ProfileEdit';
-import UserDashboard from './pages/UserDashboard';
 import './index.css';
 
 const App: React.FC = () => {

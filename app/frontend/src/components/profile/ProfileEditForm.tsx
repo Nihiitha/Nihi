@@ -50,7 +50,6 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
 
   const [touched, setTouched] = useState<TouchedFields>({});
   const [skills, setSkills] = useState(profile.skills);
-  const [avatar, setAvatar] = useState<File | null>(null); // Used in handleImageChange
   const [avatarPreview, setAvatarPreview] = useState<string | null>(profile.avatar);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -73,7 +72,6 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   };
 
   const handleImageChange = (file: File | null) => {
-    setAvatar(file);
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {

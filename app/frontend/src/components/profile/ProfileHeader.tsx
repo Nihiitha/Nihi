@@ -25,13 +25,10 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, isOwnProfile = false, onEdit }) => {
-  const [isEditing, setIsEditing] = useState(false); // For future edit functionality
-
   const handleEdit = () => {
     if (onEdit) {
       onEdit('profile');
     }
-    setIsEditing(true);
   };
 
   return (
