@@ -214,10 +214,8 @@ const Profile: React.FC = () => {
           {/* Right Column - User Activity */}
           <div className="lg:col-span-1">
             <UserActivity
-              userId={profile.id}
               connectionCount={profile.connectionCount}
               mutualConnections={profile.mutualConnections}
-              isOwnProfile={isOwnProfile}
             />
           </div>
         </div>
