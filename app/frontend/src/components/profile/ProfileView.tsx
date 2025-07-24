@@ -30,8 +30,8 @@ const ProfileView: React.FC = () => {
     setLoading(true);
     setError(null);
     Promise.all([
-      api.getProfile(1),
-      api.getActivity(1)
+      api.getProfile(),
+      api.getActivity()
     ])
       .then(([profileData, activityData]) => {
         if ('error' in profileData) throw new Error(profileData.error);
