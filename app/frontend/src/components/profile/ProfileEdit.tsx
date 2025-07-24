@@ -9,7 +9,6 @@ const ProfileEdit: React.FC = () => {
   const [profile, setProfile] = useState<MockUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -32,7 +31,6 @@ const ProfileEdit: React.FC = () => {
   }, [userId]);
 
   const handleSave = async (updatedProfile: MockUserProfile) => {
-    setIsSubmitting(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setProfile(updatedProfile);
@@ -40,8 +38,6 @@ const ProfileEdit: React.FC = () => {
       navigate(`/profile/${userId}`);
     } catch (err) {
       alert('Failed to save profile. Please try again.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

@@ -11,7 +11,6 @@ const ProfileEdit: React.FC = () => {
   const [profile, setProfile] = useState<MockUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Simulate loading profile data
   useEffect(() => {
@@ -42,7 +41,6 @@ const ProfileEdit: React.FC = () => {
   }, [userId]);
 
   const handleSave = async (updatedProfile: MockUserProfile) => {
-    setIsSubmitting(true);
     
     try {
       // Simulate API call delay
@@ -59,7 +57,7 @@ const ProfileEdit: React.FC = () => {
     } catch (err) {
       throw new Error('Failed to save profile. Please try again.');
     } finally {
-      setIsSubmitting(false);
+      
     }
   };
 
