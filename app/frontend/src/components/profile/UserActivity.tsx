@@ -23,17 +23,13 @@ interface Activity {
 }
 
 interface UserActivityProps {
-  userId: number;
   connectionCount: number;
   mutualConnections: number;
-  isOwnProfile?: boolean;
 }
 
 const UserActivity: React.FC<UserActivityProps> = ({
-  userId,
   connectionCount,
-  mutualConnections,
-  isOwnProfile = false
+  mutualConnections
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);

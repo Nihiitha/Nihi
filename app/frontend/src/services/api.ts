@@ -23,8 +23,8 @@ export const api = {
   },
 
   // Mock get profile
-  getProfile: async (userId = 1) => {
-    const profile = mockProfiles.find((p) => p.id === userId);
+  getProfile: async () => {
+    const profile = mockProfiles.find((p) => p.id === 1);
     if (profile) return simulateDelay(profile);
     return simulateDelay({ error: 'Profile not found' });
   },
@@ -36,7 +36,7 @@ export const api = {
   },
 
   // Mock get activity
-  getActivity: async (userId = 1) => {
+  getActivity: async () => {
     // Return all activities for now
     return simulateDelay(mockActivities);
   },

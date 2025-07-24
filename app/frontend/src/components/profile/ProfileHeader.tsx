@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaLinkedin, FaTwitter, FaGithub, FaGlobe, FaMapMarkerAlt, FaEdit } from 'react-icons/fa';
 
 interface UserProfile {

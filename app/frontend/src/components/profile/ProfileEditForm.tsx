@@ -9,7 +9,6 @@ interface ProfileEditFormProps {
   profile: MockUserProfile;
   onSave: (updatedProfile: MockUserProfile) => Promise<void>;
   onCancel: () => void;
-  isSubmitting?: boolean;
 }
 
 interface FormState {
@@ -32,8 +31,7 @@ interface TouchedFields {
 const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   profile,
   onSave,
-  onCancel,
-  isSubmitting = false
+  onCancel
 }) => {
   const [formData, setFormData] = useState<FormState>({
     name: profile.name,
